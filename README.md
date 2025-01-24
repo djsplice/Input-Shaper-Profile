@@ -40,6 +40,7 @@ Configure your slicer to expose print profile names, and pass that name when you
 
 In Orca Slicer, I had to update the 'Template Custom G-Code' section in my Printer profile, and make the `print_preset` variable available for use.
 ![[Pasted image 20250124093425.png]]
+![]("./imgPasted image 20250124093425.png")
 Update the 'Start Machine G-Code' to pass along the `print_preset` data:
 `START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] PROFILE="[print_preset]"`
 ### Update your `START_PRINT` routine to call `SET_SHAPER_PROFILE`
