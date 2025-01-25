@@ -34,7 +34,7 @@ Kalico allows you to set a `max_acceleration` for each axis independently using 
 ### Create and Test  'Quality' and 'Performance' Input Shaper configurations
 Run ShakeTune `AXES_SHAPER_CALIBRATION` process, and test recommended Quality and Performance settings.
 
-Once validated, enter the values into the profiles defined in`SHAPER_PROFILES` gcode macro.
+Once validated, enter the values into the profiles defined in the `saved_variables.cfg` file.
 ### Integrate the `SET_SHAPER_PROFILE` macro into your `START_PRINT` routine
 Configure your slicer to expose print profile names, and pass that name when you call `START_PRINT`
 
@@ -72,7 +72,7 @@ Example - Draft for Performance Input Shaper profile:
 <img src="/img/20250124094514.png" width="400">
 
 ### Set max accel values in your slicer profile
-Use the highest acceleration values based on input shaper recommendations for Inner/Outer walls acceleration limits. This will set upper limits for the entire print, `SET_SHAPER_PROFILE` will set additional limits on each axis as defined in performance or quality variables set in the `SHAPER_PROFILE` macro. 
+Use the highest acceleration values based on input shaper recommendations for Inner/Outer walls acceleration limits. This will set upper limits for the entire print, `SET_SHAPER_PROFILE` will set additional limits on each axis as defined in performance or quality variables set in the `saved_variables.cfg` file. 
 
 As an example, if your ShakeTune Performance profile recommended a max accel of 13300 for X axis and a max accel of 5120 for the Y axis - use the value of 13300 (OR LESS) as a starting point. You can always increase or decrease this value as you see fit, you can also use this value in other features outside of Inner/Outer walls.
 
@@ -81,16 +81,10 @@ As an example, even though my shaper recommendations say I can use a max accel o
 <img src="/img/20250124101355.png" width="400">
 
 ### Putting it all together
-If you have the following Quality configuration set in the `SHAPER_PROFILE` macro as such:
+If you have the following Quality configuration set in the `saved_variables.cfg` file as such:
 ```
-variable_quality:                             #
-  {                                  #
-    'shaper_type_x': 'smooth_ei',    #
-    'smoother_freq_x': 67.0,         #
-    'shaper_type_y': 'smooth_ei',    #
-    'smoother_freq_y': 41.2,         #
-    'max_y_accel': 5320,             #
-  }
+quality = {'shaper_type_x': 'smooth_ei', 'smoother_freq_x': 67.0, 'shaper_type_y': 'smooth_ei', 'smoother_freq_y': 41.2, 'max_y_accel': 5320}
+performance = {'shaper_x': 'mzv', 'shaper_freq_x': 68.4, 'damping_ratio_x': 0.068, 'shaper_y': 'mzv', 'shaper_freq_y': 42.6, 'damping_ratio_y': 0.078}
 ```
 The resultant behavior would be to enforce all speed limits based on slicer config above:
 - Normal Printing - 15000mm/s
