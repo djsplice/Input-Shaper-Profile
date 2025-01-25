@@ -115,6 +115,6 @@ The `0.20mm - HQ` Slicer profile will set overall limits:
 - Travel - 25000mm/s
 - etc..
 
-The Quality Input shaper will apply additional limits:
+The Quality Input shaper profile will apply additional limits:
 - Set `smooth_ei` shapers for x and y
 - Limit `max_y_accel` to 5320mm/sec
