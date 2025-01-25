@@ -45,7 +45,9 @@ In Orca Slicer, I had to update the 'Template Custom G-Code' section in my Print
 <img src="/img/20250124093425.png" width="400">
 
 Update the 'Start Machine G-Code' to pass along the `print_preset` data:
-`START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] PROFILE="[print_preset]"`
+```
+START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] PROFILE="[print_preset]"
+```
 ### Update your `START_PRINT` routine to call `SET_SHAPER_PROFILE`
 ```
   # Set Input Shaper configuration based on Slicer Profile
@@ -53,8 +55,11 @@ Update the 'Start Machine G-Code' to pass along the `print_preset` data:
     {action_respond_info("Draft profile detected - Removing Y Acceleration Limits and applying performance input shaper settings .")}
     SET_SHAPER_PROFILE PROFILE=performance
   {% else %}
-    {action_respond_info("Configuring for Quality acceleration speeds and input shaper settings.")}
-    SET_SHAPER_PROFILE PROFILE=quality
+    {% if 'HQ' in PROFILE %}
+      {action_respond_info("Configuring for Quality acceleration speeds and input shaper settings.")}
+      SET_SHAPER_PROFILE PROFILE=quality
+    {% endif %} 
+    SET_SHAPER_PROFILE PROFILE=load-printer-default
   {% endif %} 
 ```
 > [!Default Behavior]
