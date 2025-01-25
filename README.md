@@ -1,4 +1,4 @@
-## What is this?
+## What is this macro all about?
 A macro and supporting configuration to dynamically select Input Shaper configuration and per-axis acceleration at print start time.
 ### Prerequisites:
 - Kalico (Bleeding Edge v2 if you want to use Extruder PA Sync - recommended)
