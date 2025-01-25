@@ -1,10 +1,12 @@
 ## What is this macro all about?
-A macro and supporting configuration to dynamically select Input Shaper configuration and per-axis acceleration at print start time.
+It's a macro and supporting configuration that allows you to dynamically select Input Shaper configuration and per-axis acceleration at print start time.
 ### Prerequisites:
 - Kalico (Bleeding Edge v2 if you want to use Extruder PA Sync - recommended)
 	- Patch to `toolhead.py` to enable setting of per-axis accels using `SET_VELOCITY_LIMIT` macro
 - Ability to pass slicer profile name into Gcode macro
 - Input Shaper recommendations (I use ShakeTune)
+- A `saved_variables.cfg` file for storing Input Shaper profile data
+- 
 ## Input Shaper Profiles
 Wouldn't it be nice if we didn't have to make print quality tradeoffs based on global toolhead acceleration values? Wouldn't it also be nice to automatically apply the best input shaper configuration to meet print speed or quality goals (eg: Draft Mode, High Quality Mode).
 
