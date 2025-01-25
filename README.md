@@ -1,10 +1,12 @@
-## What is this?
-A macro and supporting configuration to dynamically select Input Shaper configuration and per-axis acceleration at print start time.
+## What is this macro all about?
+It's a macro and supporting configuration that allows you to dynamically select Input Shaper configuration and per-axis acceleration at print start time.
 ### Prerequisites:
 - Kalico (Bleeding Edge v2 if you want to use Extruder PA Sync - recommended)
 	- Patch to `toolhead.py` to enable setting of per-axis accels using `SET_VELOCITY_LIMIT` macro
 - Ability to pass slicer profile name into Gcode macro
 - Input Shaper recommendations (I use ShakeTune)
+- A `saved_variables.cfg` file for storing Input Shaper profile data
+- 
 ## Input Shaper Profiles
 Wouldn't it be nice if we didn't have to make print quality tradeoffs based on global toolhead acceleration values? Wouldn't it also be nice to automatically apply the best input shaper configuration to meet print speed or quality goals (eg: Draft Mode, High Quality Mode).
 
@@ -34,7 +36,7 @@ Kalico allows you to set a `max_acceleration` for each axis independently using 
 ### Create and Test  'Quality' and 'Performance' Input Shaper configurations
 Run ShakeTune `AXES_SHAPER_CALIBRATION` process, and test recommended Quality and Performance settings.
 
-Once validated, enter the values into the profiles defined in`SHAPER_PROFILES` gcode macro.
+Once validated, enter the values into the profiles defined in the `saved_variables.cfg` file.
 ### Integrate the `SET_SHAPER_PROFILE` macro into your `START_PRINT` routine
 Configure your slicer to expose print profile names, and pass that name when you call `START_PRINT`
 
@@ -43,7 +45,9 @@ In Orca Slicer, I had to update the 'Template Custom G-Code' section in my Print
 <img src="/img/20250124093425.png" width="400">
 
 Update the 'Start Machine G-Code' to pass along the `print_preset` data:
-`START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] PROFILE="[print_preset]"`
+```
+START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] PROFILE="[print_preset]"
+```
 ### Update your `START_PRINT` routine to call `SET_SHAPER_PROFILE`
 ```
   # Set Input Shaper configuration based on Slicer Profile
@@ -51,8 +55,11 @@ Update the 'Start Machine G-Code' to pass along the `print_preset` data:
     {action_respond_info("Draft profile detected - Removing Y Acceleration Limits and applying performance input shaper settings .")}
     SET_SHAPER_PROFILE PROFILE=performance
   {% else %}
-    {action_respond_info("Configuring for Quality acceleration speeds and input shaper settings.")}
-    SET_SHAPER_PROFILE PROFILE=quality
+    {% if 'HQ' in PROFILE %}
+      {action_respond_info("Configuring for Quality acceleration speeds and input shaper settings.")}
+      SET_SHAPER_PROFILE PROFILE=quality
+    {% endif %} 
+    SET_SHAPER_PROFILE PROFILE=load-printer-default
   {% endif %} 
 ```
 > [!Default Behavior]
@@ -72,7 +79,7 @@ Example - Draft for Performance Input Shaper profile:
 <img src="/img/20250124094514.png" width="400">
 
 ### Set max accel values in your slicer profile
-Use the highest acceleration values based on input shaper recommendations for Inner/Outer walls acceleration limits. This will set upper limits for the entire print, `SET_SHAPER_PROFILE` will set additional limits on each axis as defined in performance or quality variables set in the `SHAPER_PROFILE` macro. 
+Use the highest acceleration values based on input shaper recommendations for Inner/Outer walls acceleration limits. This will set upper limits for the entire print, `SET_SHAPER_PROFILE` will set additional limits on each axis as defined in performance or quality variables set in the `saved_variables.cfg` file. 
 
 As an example, if your ShakeTune Performance profile recommended a max accel of 13300 for X axis and a max accel of 5120 for the Y axis - use the value of 13300 (OR LESS) as a starting point. You can always increase or decrease this value as you see fit, you can also use this value in other features outside of Inner/Outer walls.
 
@@ -81,16 +88,10 @@ As an example, even though my shaper recommendations say I can use a max accel o
 <img src="/img/20250124101355.png" width="400">
 
 ### Putting it all together
-If you have the following Quality configuration set in the `SHAPER_PROFILE` macro as such:
+If you have the following Quality configuration set in the `saved_variables.cfg` file as such:
 ```
-variable_quality:                             #
-  {                                  #
-    'shaper_type_x': 'smooth_ei',    #
-    'smoother_freq_x': 67.0,         #
-    'shaper_type_y': 'smooth_ei',    #
-    'smoother_freq_y': 41.2,         #
-    'max_y_accel': 5320,             #
-  }
+quality = {'shaper_type_x': 'smooth_ei', 'smoother_freq_x': 67.0, 'shaper_type_y': 'smooth_ei', 'smoother_freq_y': 41.2, 'max_y_accel': 5320}
+performance = {'shaper_x': 'mzv', 'shaper_freq_x': 68.4, 'damping_ratio_x': 0.068, 'shaper_y': 'mzv', 'shaper_freq_y': 42.6, 'damping_ratio_y': 0.078}
 ```
 The resultant behavior would be to enforce all speed limits based on slicer config above:
 - Normal Printing - 15000mm/s
