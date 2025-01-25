@@ -39,8 +39,9 @@ Once validated, enter the values into the profiles defined in`SHAPER_PROFILES` g
 Configure your slicer to expose print profile names, and pass that name when you call `START_PRINT`
 
 In Orca Slicer, I had to update the 'Template Custom G-Code' section in my Printer profile, and make the `print_preset` variable available for use.
-![[Pasted image 20250124093425.png]]
-![]("./imgPasted image 20250124093425.png")
+
+<img src="/img/20250124093425.png" width="400">
+
 Update the 'Start Machine G-Code' to pass along the `print_preset` data:
 `START_PRINT EXTRUDER_TEMP=[nozzle_temperature_initial_layer] BED_TEMP=[bed_temperature_initial_layer_single] PROFILE="[print_preset]"`
 ### Update your `START_PRINT` routine to call `SET_SHAPER_PROFILE`
@@ -62,10 +63,14 @@ Update the 'Start Machine G-Code' to pass along the `print_preset` data:
 ### Update your Slicer Print Profile
 Make sure it's got the key word HQ (for quality input shaper profile) or Draft (for performance input shaper profile) in the Profile Name.
 
-Example - HQ for Quality Input Shaper profile
-![[Pasted image 20250124094249.png|400]]
-Example - Draft for Performance Input Shaper profile
-![[Pasted image 20250124094514.png|400]]
+Example - HQ for Quality Input Shaper profile:
+
+<img src="/img/20250124094249.png" width="400">
+
+Example - Draft for Performance Input Shaper profile:
+
+<img src="/img/20250124094514.png" width="400">
+
 ### Set max accel values in your slicer profile
 Use the highest acceleration values based on input shaper recommendations for Inner/Outer walls acceleration limits. This will set upper limits for the entire print, `SET_SHAPER_PROFILE` will set additional limits on each axis as defined in performance or quality variables set in the `SHAPER_PROFILE` macro. 
 
@@ -73,7 +78,8 @@ As an example, if your ShakeTune Performance profile recommended a max accel of 
 
 As an example, even though my shaper recommendations say I can use a max accel of 13300, for my quality profile, I limit wall accelerations to 6000 to further reduce artifacts.
 
-![[Pasted image 20250124101355.png|400]]
+<img src="/img/20250124101355.png" width="400">
+
 ### Putting it all together
 If you have the following Quality configuration set in the `SHAPER_PROFILE` macro as such:
 ```
